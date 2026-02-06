@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 
 const { connectDB } = require("./config/db");
 const {authRouter} = require("./routes/auth.route");
+const { sessionRouter} = require("./routes/session.route");
 
 const app = express();
 
@@ -15,6 +16,7 @@ dotenv.config();
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
@@ -29,7 +31,7 @@ app.use(cookieParser()); // to read the cokkies
 
 // Routes
 app.use("/api/auth", authRouter);
-// app.use("/api/sessions", sessionRouter);
+app.use("/api/sessions", sessionRouter);
 // app.use("/api/questions", questionRouter);
 
 // app.use("/api/ai/generate-questions", protect, generateInterviewQuestionsRouter);

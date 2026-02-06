@@ -21,7 +21,7 @@ const sessionSchema = new mongoose.Schema(
         description: {
             type: String,
         },
-        queestions: [
+        questions: [
             {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Question",
