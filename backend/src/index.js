@@ -4,14 +4,17 @@ const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
+dotenv.config();
+
 const { connectDB } = require("./config/db");
 const {authRouter} = require("./routes/auth.route");
 const { sessionRouter} = require("./routes/session.route");
 const { questionRouter } = require("./routes/question.route");
+const { generateInterviewQuestions } = require("./controllers/ai.controller");
+const { generateConceptExplaination } = require("./controllers/ai.controller");
+const { protect } = require("./middlewares/auth.middleware");
 
 const app = express();
-
-dotenv.config();
 
 // middlewares to handle CORS
 app.use(
@@ -35,10 +38,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/questions", questionRouter);
 
-// app.use("/api/ai/generate-questions", protect, generateInterviewQuestionsRouter);
-// app.use("/api/ai/generate-explaination", protect, generateConceptExplainationRouter);
-
-
+app.use("/api/ai/generate-questions", protect, generateInterviewQuestions);
+app.use("/api/ai/generate-explaination", protect, generateConceptExplaination);
 
 
 // Server uploads folder
