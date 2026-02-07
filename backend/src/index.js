@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const { connectDB } = require("./config/db");
 const {authRouter} = require("./routes/auth.route");
 const { sessionRouter} = require("./routes/session.route");
+const { questionRouter } = require("./routes/question.route");
 
 const app = express();
 
@@ -32,7 +33,7 @@ app.use(cookieParser()); // to read the cokkies
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/sessions", sessionRouter);
-// app.use("/api/questions", questionRouter);
+app.use("/api/questions", questionRouter);
 
 // app.use("/api/ai/generate-questions", protect, generateInterviewQuestionsRouter);
 // app.use("/api/ai/generate-explaination", protect, generateConceptExplainationRouter);
