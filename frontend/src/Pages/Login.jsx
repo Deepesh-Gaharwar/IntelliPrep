@@ -1,13 +1,18 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 import Input from "../Components/Input"
 import { validateEmail } from '../utils/helper';
+import axiosInstance from '../utils/axiosInstance';
+import { API_PATHS } from '../utils/apiPaths';
+import { UserContext } from '../Context/UserContext';
 
 const Login = ({setCurrentPage}) => {
-    const [email, setEmail] = useState("");
+    const [emailId, setEmailId] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
+
+    const { updateUser } = useContext(UserContext);
 
     const navigate = useNavigate();
 
@@ -15,8 +20,8 @@ const Login = ({setCurrentPage}) => {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        if(!validateEmail(email)) {
-            setError("Please enter a valid email address.");
+        if(!validateEmail(emailId)) {
+            setError("Please enter a valid emailId address.");
             return;
         }
 
@@ -30,7 +35,22 @@ const Login = ({setCurrentPage}) => {
 
         // Login API call
         try {
-            
+            const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+              emailId,
+              password,
+            });
+
+            const { token } = response.data;
+
+            if (!token) {
+              setError("Invalid login response. Please try again.");
+              return;
+            }
+
+            localStorage.setItem("token", token);
+            updateUser(response.data); // update the user context
+            navigate("/dashboard");
+
         } catch (error) {
             if(error.response && error.response.data.message) {
                 setError(error.response.data.message);
@@ -52,9 +72,9 @@ const Login = ({setCurrentPage}) => {
 
       <form onSubmit={handleLogin}>
         <Input
-          value={email}
-          onChange={({ target }) => setEmail(target.value)}
-          label="Email Address"
+          value={emailId}
+          onChange={({ target }) => setEmailId(target.value)}
+          label="EmailId Address"
           placeholder="john@gmail.com"
           type="text"
         />

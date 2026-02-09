@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Modal from '../Components/Modal';
 import Login from './Login';
 
@@ -7,16 +7,25 @@ import { useNavigate } from 'react-router-dom';
 import {LuSparkles} from "react-icons/lu"
 import Signup from './Signup';
 import HEROIMG from "../assets/HERO.png";
+import { UserContext } from '../Context/UserContext';
+import ProfileInfoCard from "../Components/ProfileInfoCard";
 
 const LandingPage = () => {
+    const { user } = useContext(UserContext);
+
     const navigate = useNavigate();
 
     const [openAuthModel, setOpenAuthModel] = useState(false);
     const [currentPage, setCurrentPage] = useState("login");
 
     const handleClick = () => {
+      if(!user) {
+        setOpenAuthModel(true);
 
-    }
+      } else {
+        navigate("/dashboard");
+      }
+    };
 
   return (
     <>
@@ -28,12 +37,16 @@ const LandingPage = () => {
           <header className="flex justify-between items-center mb-12">
             <div className="text-2xl text-black font-bold">IntelliPrep</div>
 
-            <button
-              className="bg-linear-to-r from-[#FF9324] to-[#e99a4b] text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-black hover:text-white border border-white transition-colors cursor-pointer "
-              onClick={() => setOpenAuthModel(true)}
-            >
-              Login / Sign Up
-            </button>
+            {user ? (
+                      <ProfileInfoCard />
+                    ) : (
+                          <button
+                            className="bg-linear-to-r from-[#FF9324] to-[#e99a4b] text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-black hover:text-white border border-white transition-colors cursor-pointer "
+                            onClick={() => setOpenAuthModel(true)}
+                          >
+                            Login / Sign Up
+                          </button>
+                        )}
           </header>
 
           {/* Hero Section */}

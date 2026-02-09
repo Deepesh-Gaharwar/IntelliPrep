@@ -1,4 +1,5 @@
 const express = require("express");
+const User = require("../models/user.model");
 
 const { registerUser, loginUser, getUserProfile } = require("../controllers/auth.controller");
 const { protect } = require("../middlewares/auth.middleware");
@@ -21,14 +22,14 @@ authRouter.get("/profile", protect, getUserProfile);
 
 
 // upload image
-authRouter.post("/upload-image", upload.single("image"), (req, res) => {
+authRouter.post("/upload-image", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({
       message: "No file uploaded!",
     });
   }
 
-  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;   
   
   res.status(200).json({ imageUrl });
 });

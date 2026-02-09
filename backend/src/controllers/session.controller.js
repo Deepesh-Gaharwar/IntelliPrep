@@ -122,16 +122,15 @@ const deleteSession = async (req, res) => {
         }
 
         // check if the logged-in user owns this session
-        if(session.userId.toString() != req.user.id) {
-            return res.status(401)
-            .json({
-                message: "Not authorized to delete this session"
-            });
+        if (session.userId.toString() !== req.user._id.toString()) {
+          return res.status(401).json({
+            message: "Not authorized to delete this session",
+          });
         }
 
 
         // first. delete all the questions linked to this session
-        await Question.deleteMany({session: session._id});
+        await Question.deleteMany({sessionId: session._id});
 
         // then, delete the session
         await session.deleteOne();

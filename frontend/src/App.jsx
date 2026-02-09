@@ -8,39 +8,45 @@ import Signup from "./Pages/Signup";
 import LandingPage from "./Pages/LandingPage";
 import Dashboard from "./Pages/Dashboard";
 import InterviewPrep from "./Pages/InterviewPrep";
+import UserProvider from "./Context/UserContext";
+import NotFound from './Components/NotFound';
 
 const App = () => {
   return (
     <>
-      <Router>
-        <Routes>
+      <UserProvider>
+        <Router>
+          <Routes>
+            {/* Default Route */}
+            <Route path="/" element={<LandingPage />} />
 
-          {/* Default Route */}
-          <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/interview-prep/:sessionId"
+              element={<InterviewPrep />}
+            />
+            
+            {/* Not Found Route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
 
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/interview-prep/:sessionId" element={<InterviewPrep />} />
-
-
-        </Routes>
-      </Router>
-
-      {/*  ToastContainer  */}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      
+          {/*  ToastContainer  */}
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </Router>
+      </UserProvider>
     </>
   );
 }
