@@ -6,6 +6,7 @@ import { validateEmail } from '../utils/helper';
 import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
 import { UserContext } from '../Context/UserContext';
+import {toast} from "react-toastify";
 
 const Login = ({setCurrentPage}) => {
     const [emailId, setEmailId] = useState("");
@@ -49,14 +50,19 @@ const Login = ({setCurrentPage}) => {
 
             localStorage.setItem("token", token);
             updateUser(response.data); // update the user context
+
+            toast.success("Logged In successfully...");
             navigate("/dashboard");
 
         } catch (error) {
             if(error.response && error.response.data.message) {
                 setError(error.response.data.message);
 
+                toast.error("Error: ", error);
+
             } else{
                 setError("Something went wrong. Please try again.");
+                toast.error("Something went wrong. Please try again.");
             }
         }
     };

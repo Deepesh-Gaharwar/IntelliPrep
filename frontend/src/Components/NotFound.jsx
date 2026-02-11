@@ -21,7 +21,10 @@ const NotFound = () => {
       {/* Ambient blur */}
       <div className="w-[500px] h-[500px] bg-amber-200/20 blur-[65px] absolute top-0 left-0" />
 
-      <div className="container mx-auto px-6 md:px-10 lg:px-16 pt-10 relative z-10">
+      <div
+        className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16
+ px-6 md:px-10 lg:px-16 pt-10 relative z-10"
+      >
         {/* Header (same as landing) */}
         <header className="flex justify-between items-center mb-20">
           <div

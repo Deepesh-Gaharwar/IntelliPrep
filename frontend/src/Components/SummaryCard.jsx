@@ -21,7 +21,7 @@ const SummaryCard = ({
       onClick={onSelect}
     >
       <div
-        className="rounded-lg p-4 cursor-pointer relative"
+        className="rounded-lg p-4 pr-10 cursor-pointer relative"
         style={{ background: colors.bgcolor }}
       >
         <div className="flex items-start">

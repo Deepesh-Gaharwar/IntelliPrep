@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { UserContext } from "../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const ProfileInfoCard = () => {
   const { user, clearUser } = useContext(UserContext);
@@ -11,6 +12,8 @@ const ProfileInfoCard = () => {
     localStorage.clear(); // clear the local storage
     clearUser(); // clear user stored in user context
     navigate("/");
+
+    toast.success("Logout successfully!");
   };
 
   if (!user) return null;
