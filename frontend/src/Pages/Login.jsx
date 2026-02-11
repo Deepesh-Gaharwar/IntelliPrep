@@ -7,11 +7,15 @@ import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
 import { UserContext } from '../Context/UserContext';
 import {toast} from "react-toastify";
+import { Loader2 } from "lucide-react";
 
 const Login = ({setCurrentPage}) => {
     const [emailId, setEmailId] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
+
+    const [loading, setLoading] = useState(false);
+
 
     const { updateUser } = useContext(UserContext);
 
@@ -32,38 +36,38 @@ const Login = ({setCurrentPage}) => {
         }
 
         setError("");
-
+         setLoading(true);
 
         // Login API call
         try {
-            const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
-              emailId,
-              password,
-            });
+          const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+            emailId,
+            password,
+          });
 
-            const { token } = response.data;
+          const { token } = response.data;
 
-            if (!token) {
-              setError("Invalid login response. Please try again.");
-              return;
-            }
+          if (!token) {
+            setError("Invalid login response. Please try again.");
+            return;
+          }
 
-            localStorage.setItem("token", token);
-            updateUser(response.data); // update the user context
+          localStorage.setItem("token", token);
+          updateUser(response.data); // update the user context
 
-            toast.success("Logged In successfully...");
-            navigate("/dashboard");
-
+          toast.success("Logged In successfully...");
+          navigate("/dashboard");
         } catch (error) {
-            if(error.response && error.response.data.message) {
-                setError(error.response.data.message);
+          if (error.response && error.response.data.message) {
+            setError(error.response.data.message);
 
-                toast.error("Error: ", error);
-
-            } else{
-                setError("Something went wrong. Please try again.");
-                toast.error("Something went wrong. Please try again.");
-            }
+            toast.error(error.response.data.message);
+          } else {
+            setError("Something went wrong. Please try again.");
+            toast.error("Something went wrong. Please try again.");
+          }
+        } finally {
+          setLoading(false);
         }
     };
 
@@ -95,8 +99,13 @@ const Login = ({setCurrentPage}) => {
 
         {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
 
-        <button type="submit" className="btn-primary cursor-pointer">
-          LOGIN
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary cursor-pointer flex items-center justify-center gap-2"
+        >
+          {loading && <Loader2 className="animate-spin w-4 h-4" />}
+          {loading ? "Logging in..." : "LOGIN"}
         </button>
 
         <p className="text-[13px] text-slate-800 mt-3 ">

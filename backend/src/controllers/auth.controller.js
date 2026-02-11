@@ -1,6 +1,9 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../utils/cloudinary");
+const fs = require("fs");
+const path = require("path");
 
 
 // generate JWT token
@@ -21,45 +24,56 @@ const generateToken = (userId) => {
 // register new user
 const registerUser = async (req, res) => {
     try {
+      const { name, emailId, password } = req.body;
 
-        const {name, emailId, password, profileImageUrl} = req.body;
+      // check if user already exists
+      const userExists = await User.findOne({ emailId });
 
-        // check if user already exists
-        const userExists = await User.findOne({emailId});
+      if (userExists) {
+        return res.status(400).json({
+          message: "User already exists",
+        });
+      }
 
-        if(userExists) {
-            return res.status(400).json({
-                message: "User already exists"
-            });
-        }
+      // hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
+      let profileImageUrl = null;
 
-        // hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+      // If file exists, upload to Cloudinary
+      if (req.file) {
+        const localFilePath = req.file.path;
 
-
-        // create a new user
-        const user = await User.create({
-            name,
-            emailId,
-            password: hashedPassword,
-            profileImageUrl,
+        const result = await cloudinary.uploader.upload(localFilePath, {
+          folder: "profile_images",
         });
 
-        // generate token
-        const JWTToken = generateToken(user._id);
+        profileImageUrl = result.secure_url;
 
+        // Delete file from uploads folder
+        fs.unlinkSync(localFilePath);
+      }
 
-        // return user data with JWT
-        res.status(201).json({
-            _id: user._id,
-            name: user.name,
-            emailId: user.emailId,
-            profileImageUrl: user.profileImageUrl,
-            token: JWTToken,
-        });
-        
+      // create a new user
+      const user = await User.create({
+        name,
+        emailId,
+        password: hashedPassword,
+        profileImageUrl,
+      });
+
+      // generate token
+      const JWTToken = generateToken(user._id);
+
+      // return user data with JWT
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        emailId: user.emailId,
+        profileImageUrl: user.profileImageUrl,
+        token: JWTToken,
+      });
     } catch (error) {
         res.status(500).json({
             message: "Server error",

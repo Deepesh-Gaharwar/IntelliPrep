@@ -1,5 +1,7 @@
 import React, {useContext, useState} from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 import Input from "../Components/Input";
 import ProfilePhotoSelector from '../Components/ProfilePhotoSelector';
@@ -7,7 +9,6 @@ import { validateEmail } from '../utils/helper';
 import { UserContext } from '../Context/UserContext';
 import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
-import uploadImage from '../utils/uploadImage';
 
 const Signup = ({setCurrentPage}) => {
 
@@ -17,6 +18,7 @@ const Signup = ({setCurrentPage}) => {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { updateUser } = useContext(UserContext);
 
@@ -25,8 +27,6 @@ const Signup = ({setCurrentPage}) => {
   // handle Sign Up Form Submit
   const handleSignUp = async (e) => {
     e.preventDefault();
-
-    let profileImageUrl = "";
 
     if(!fullName) {
       setError("Please enter Full Name");
@@ -50,40 +50,48 @@ const Signup = ({setCurrentPage}) => {
 
 
     setError("");
+    setLoading(true);
 
     // Sign Up API call
     try {
       // upload image if present
-      if(profilePic) {
-        const imgUploadRes = await uploadImage(profilePic);
+      const formData = new FormData();
 
-        profileImageUrl = imgUploadRes.imageUrl || "";
+      formData.append("name", fullName);
+      formData.append("emailId", email);
+      formData.append("password", password);
+
+      if (profilePic) {
+        formData.append("profileImage", profilePic); // must match with multer
       }
 
-      const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
-        name: fullName,
-        emailId: email,
-        password,
-        profileImageUrl
+      const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-
 
       const { token } = res.data;
 
-      if(token) {
+      if (token) {
         localStorage.setItem("token", token);
 
         updateUser(res.data);
 
-        navigate("/dashboard");
-      }
+        toast.success("Account created successfully!");
 
+        navigate("/dashboard");
+      } else {
+        toast.error("Registration failed. Please try again.");
+      }
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message);
+      if (error?.response && error?.response?.data?.message) {
+        setError(error?.response?.data?.message);
       } else {
         setError("Something went wrong. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
 
   };
@@ -126,8 +134,13 @@ const Signup = ({setCurrentPage}) => {
 
           {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
 
-          <button type="submit" className="btn-primary cursor-pointer">
-            SIGN UP
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary cursor-pointer flex items-center justify-center gap-2"
+          >
+            {loading && <Loader2 className="animate-spin w-4 h-4" />}
+            {loading ? "Creating Account..." : "SIGN UP"}
           </button>
 
           <p className="text-[13px] text-slate-800 mt-3">

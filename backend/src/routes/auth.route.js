@@ -10,7 +10,7 @@ const authRouter = express.Router();
 
 
 // register user
-authRouter.post("/register", registerUser);
+authRouter.post("/register", upload.single("profileImage"), registerUser);
 
 
 // Login user

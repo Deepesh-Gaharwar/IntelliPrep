@@ -28,7 +28,10 @@ const RoleInfoHeader = ({
 
           <div className="flex flex-wrap items-center gap-3 mt-6">
             <div className="text-[11px] font-semibold text-white bg-black px-4 py-1.5 rounded-full">
-              Experience: {experience} {experience === 1 ? "Year" : "Years"}
+              Experience:{" "}
+              {experience
+                ? `${experience} ${Number(experience) === 1 ? "Year" : "Years"}`
+                : "-"}
             </div>
 
             <div className="text-[11px] font-semibold text-white bg-black px-4 py-1.5 rounded-full">

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 const axiosInstance = axios.create({
@@ -41,10 +42,10 @@ axiosInstance.interceptors.response.use(
                 window.location.href = "/";
 
             } else if(error.response.status === 500) {
-                console.log("Server Error. Please try again later.");
+                toast.error("Server Error. Please try again later.");
 
             } else if(error.code == "ECONNABORTED") {
-                console.log("Request timeout. Please try again.");
+                toast.error("Request timeout. Please try again.");
 
             }
 
