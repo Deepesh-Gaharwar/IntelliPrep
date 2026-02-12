@@ -42,9 +42,6 @@ app.use("/api/ai/generate-questions", protect, generateInterviewQuestions);
 app.use("/api/ai/generate-explaination", protect, generateConceptExplaination);
 
 
-// Server uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
-
 const PORT = process.env.PORT || 5000;
 
 
