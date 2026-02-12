@@ -10,9 +10,9 @@ const Navbar = () => {
  flex items-center justify-between gap-5"
       >
         <Link to="/dashboard">
-          <h2 className="text-lg md:text-xl font-medium text-black leading-5">
+          <div className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-yellow-400 bg-clip-text text-transparent">
             IntelliPrep
-          </h2>
+          </div>
         </Link>
 
         <ProfileInfoCard />

@@ -4,6 +4,8 @@ import Input from '../Components/Input';
 import { Loader } from "lucide-react";
 import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
+import { toast } from "react-toastify";
+
 
 const CreateSessionForm = () => {
     const [formData, setFormData] = useState({
@@ -40,6 +42,8 @@ const CreateSessionForm = () => {
         setIsLoading(true);
 
         try {
+          const loadingToast = toast.loading("Generating your session...");
+
           // Call AI API to generate questions
           const aiResponse = await axiosInstance.post(
             API_PATHS.AI.GENERATE_QUESTIONS,
@@ -59,7 +63,11 @@ const CreateSessionForm = () => {
             questions: generatedQuestions,
           });
 
+          toast.dismiss(loadingToast);
+
           if (response?.data?.session?._id) {
+            toast.success("Your session is successfully created!");
+
             navigate(`/interview-prep/${response.data?.session?._id}`);
           }
         } catch (error) {

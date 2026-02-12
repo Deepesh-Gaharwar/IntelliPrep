@@ -31,9 +31,9 @@ const InterviewPrep = () => {
 
 
   // fetch session data by session Id
-  const fetchSessionDetailsById = async () => {
+  const fetchSessionDetailsById = async (showLoader = true) => {
     try {
-      setPageLoading(true);
+      if (showLoader) setPageLoading(true);
 
       const response = await axiosInstance.get(
         API_PATHS.SESSION.GET_ONE(sessionId),
@@ -45,7 +45,7 @@ const InterviewPrep = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch session");
     } finally {
-      setPageLoading(false);
+      if (showLoader) setPageLoading(false);
     }
   };
 
@@ -90,12 +90,11 @@ const InterviewPrep = () => {
       const response = await axiosInstance.post(API_PATHS.QUESTION.PIN(questionId));
 
       if(response?.data && response?.data?.question) {
-        toast.success("Updated successfully");
-        fetchSessionDetailsById();
+        fetchSessionDetailsById(false);
       }
 
     } catch (error) {
-      toast.error("Error while Pin Question");
+      console.log("Error while Pin Question", error);
     }
   };
 
