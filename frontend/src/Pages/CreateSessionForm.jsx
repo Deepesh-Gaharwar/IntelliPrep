@@ -32,9 +32,14 @@ const CreateSessionForm = () => {
 
         const {role, experience, topicsToFocus } = formData;
 
-        if(!role || !experience || !topicsToFocus) {
-            setError("Please fill all the required fields!")
-            return;
+        if (!role.trim() || topicsToFocus.trim() === "") {
+          setError("Please fill all the required fields!");
+          return;
+        }
+
+        if (experience === "" || experience < 0) {
+          setError("Please enter valid years of experience!");
+          return;
         }
 
         setError("");
@@ -42,7 +47,7 @@ const CreateSessionForm = () => {
         setIsLoading(true);
 
         try {
-          const loadingToast = toast.loading("Generating your session...");
+         // const loadingToast = toast.loading("Generating your session...");
 
           // Call AI API to generate questions
           const aiResponse = await axiosInstance.post(
@@ -63,7 +68,7 @@ const CreateSessionForm = () => {
             questions: generatedQuestions,
           });
 
-          toast.dismiss(loadingToast);
+          // toast.dismiss(loadingToast);
 
           if (response?.data?.session?._id) {
             toast.success("Your session is successfully created!");
